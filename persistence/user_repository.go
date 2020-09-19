@@ -7,6 +7,7 @@ import (
 	. "github.com/Masterminds/squirrel"
 	"github.com/astaxie/beego/orm"
 	"github.com/deluan/navidrome/model"
+	"github.com/deluan/navidrome/utils"
 	"github.com/deluan/rest"
 	"github.com/google/uuid"
 )
@@ -47,6 +48,11 @@ func (r *userRepository) Put(u *model.User) error {
 		id, _ := uuid.NewRandom()
 		u.ID = id.String()
 	}
+	hashed_password, err := utils.HashPassword(u.Password)
+	if err != nil {
+		return err
+	}
+	u.Password = hashed_password
 	u.UpdatedAt = time.Now()
 	values, _ := toSqlArgs(*u)
 	update := Update(r.tableName).Where(Eq{"id": u.ID}).SetMap(values)

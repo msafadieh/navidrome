@@ -13,6 +13,7 @@ import (
 	"github.com/deluan/navidrome/log"
 	"github.com/deluan/navidrome/model"
 	"github.com/deluan/navidrome/model/request"
+	"github.com/deluan/navidrome/utils"
 	"github.com/deluan/rest"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/go-chi/jwtauth"
@@ -134,7 +135,7 @@ func validateLogin(userRepo model.UserRepository, userName, password string) (*m
 	if err != nil {
 		return nil, err
 	}
-	if u.Password != password {
+	if !(utils.CheckPasswordHash(password, u.Password)) {
 		return nil, nil
 	}
 	err = userRepo.UpdateLastLoginAt(u.ID)
